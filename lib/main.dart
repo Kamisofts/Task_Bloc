@@ -1,36 +1,49 @@
-import 'package:bloc_tasks/models/task.dart';
-import 'package:bloc_tasks/screens/task_screen.dart';
+import 'package:bloc_tasks/blocs/tabBloc/tabs_bloc.dart';
+import 'package:bloc_tasks/models/task_model.dart';
+import 'package:bloc_tasks/screens/tab_screen.dart';
+import 'package:bloc_tasks/screens/tabs/pending_task_screen.dart';
+import 'package:bloc_tasks/services/app_router.dart';
+import 'package:bloc_tasks/services/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'blocs/bloc_export.dart';
 
-void main() {
-  BlocOverrides.runZoned(() => runApp(const MyApp()));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final storage = await HydratedStorage.build(
+      storageDirectory: await getApplicationDocumentsDirectory());
+  HydratedBlocOverrides.runZoned(
+      () => runApp(MyApp(
+            appRouter: AppRouter(),
+          )),
+      storage: storage);
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key, required this.appRouter}) : super(key: key);
 
-  // This widget is the root of your application.
+  final AppRouter appRouter;
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc()..add(AddTask(task: TaskModel(title: "New Test Task"))),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-        ),
-        home: TasksScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => TaskBloc()),
+        BlocProvider(create: (context) => TabsBloc()),
+        BlocProvider(create: (context) => SwitchBloc()),
+      ],
+      child: BlocBuilder<SwitchBloc, SwitchState>(
+        builder: (context, state) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Tasks',
+            theme: state.switchValue
+                ? AppThemes.appThemeData[AppTheme.darkTheme]
+                : AppThemes.appThemeData[AppTheme.lightTheme],
+            home:  TabScreen(),
+            onGenerateRoute: appRouter.onGenerateRoute,
+          );
+        },
       ),
     );
   }

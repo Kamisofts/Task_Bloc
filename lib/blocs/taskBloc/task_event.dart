@@ -1,7 +1,7 @@
 part of 'task_bloc.dart';
 
-@immutable
-abstract class TaskEvent {
+
+abstract class TaskEvent extends Equatable{
   const TaskEvent();
 
   @override
@@ -33,6 +33,15 @@ class DeleteTask extends TaskEvent {
   final TaskModel task;
 
   const DeleteTask({required this.task});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [task];
+}
+class RemoveTask extends TaskEvent {
+  final TaskModel task;
+
+  const RemoveTask({required this.task});
 
   @override
   // TODO: implement props
