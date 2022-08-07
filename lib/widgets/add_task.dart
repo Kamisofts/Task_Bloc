@@ -41,7 +41,7 @@ class AddTaskScreen extends StatelessWidget {
             TextButton(onPressed: ()=>Navigator.pop(context), child:const Text('Cancel')),
             const SizedBox(width: 20),
             ElevatedButton(onPressed: (){
-              var task=TaskModel(id:GUIDGen.generate(),title: titleController.text,description: descController .text);
+              var task=TaskModel(id:GUIDGen.generate(),title: titleController.text,description: descController .text,date: DateTime.now().toString());
               context.read<TaskBloc>().add(AddTask(task: task));
               Navigator.pop(context);
             }, child:const Text('Add')),

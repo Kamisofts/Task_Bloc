@@ -1,7 +1,5 @@
 import 'package:bloc_tasks/blocs/tabBloc/tabs_bloc.dart';
-import 'package:bloc_tasks/models/task_model.dart';
 import 'package:bloc_tasks/screens/tab_screen.dart';
-import 'package:bloc_tasks/screens/tabs/pending_task_screen.dart';
 import 'package:bloc_tasks/services/app_router.dart';
 import 'package:bloc_tasks/services/app_theme.dart';
 import 'package:flutter/material.dart';
